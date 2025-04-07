@@ -1,39 +1,15 @@
 "use client"
 
-import Link from "next/link"
-import {
-  BadgeCheck,
-  Bell,
-  ChevronDown,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-  Store,
-  User,
-} from "lucide-react"
+// Dependencies
+import { BadgeCheck, Bell, ChevronDown, ChevronsUpDown, CreditCard, LogOut, Sparkles, Store } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
+// Utils
+import { cn } from "@/lib/utils";
+
+// Components
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 
 interface UserProfileProps {
   user: {
@@ -75,7 +51,6 @@ export function UserProfile({
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={toggleSidebar ? undefined : handleAvatarClick}>
               <SidebarMenuButton
-                size={minimal ? "sm" : "lg"}
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
                 onClick={toggleSidebar ? handleAvatarClick : undefined}
               >

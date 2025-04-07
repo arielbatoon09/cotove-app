@@ -1,19 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { ComponentPropsWithoutRef } from "react"
-
 import { cn } from "@/lib/utils"
-
-export interface NavItem {
-  title: string
-  href: string
-  isActive?: boolean
-}
-
-interface SecondaryNavProps extends ComponentPropsWithoutRef<"nav"> {
-  items: NavItem[]
-}
+import { SecondaryNavProps } from "@/types/navigations"
 
 export function SecondaryNav({ items, className, ...props }: SecondaryNavProps) {
   return (

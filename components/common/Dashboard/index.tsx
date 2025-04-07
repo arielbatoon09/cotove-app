@@ -1,7 +1,6 @@
-export { DashboardHeader } from "./header"
-export { DashboardNavigation } from "./navigation"
-export { DashboardSearch } from "./search"
-export { DashboardSidebar } from "./sidebar"
-export { SecondaryNav, type NavItem } from "./secondary-nav"
-export { ThemeToggle } from "./theme-toggle"
-export { UserProfile } from "./user-profile" 
+export { DashboardHeader } from "./header";
+export { DashboardNavigation } from "./navigation";
+export { DashboardSearch } from "./search";
+export { DashboardSidebar } from "./sidebar";
+export { SecondaryNav } from "./secondary-nav";
+export { UserProfile } from "./user-profile";

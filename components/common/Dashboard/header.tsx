@@ -1,9 +1,13 @@
 "use client"
 
+// Dependencies
 import Link from "next/link"
-import { Bell, MessageSquare, Menu, Store, Command } from "lucide-react"
+import { Bell, MessageSquare, Menu, Command } from "lucide-react"
 
+// Utils
 import { cn } from "@/lib/utils"
+
+// Components
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/components/ui/sidebar"
 
@@ -22,7 +26,7 @@ export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function DashboardHeader({ user, className }: HeaderProps) {
-  const { isMobile, state, toggleSidebar } = useSidebar()
+  const { state, toggleSidebar } = useSidebar()
   const isCollapsed = state === "collapsed"
 
   return (
@@ -61,14 +65,14 @@ export function DashboardHeader({ user, className }: HeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 sm:hidden"
+          className="h-9 w-9 md:hidden"
           onClick={toggleSidebar}
         >
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle sidebar</span>
         </Button>
         {/* User profile - only shown on desktop */}
-        {user && <UserProfile user={user} className="hidden sm:block" />}
+        {user && <UserProfile user={user} className="hidden md:block" />}
       </div>
     </header>
   )

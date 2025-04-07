@@ -18,12 +18,23 @@ export const config = {
 // Protected routes that should only be accessible via their respective subdomains
 const PROTECTED_ROUTES = ['/admin', '/dashboard', '/store']
 
+// Static asset file extensions that should be accessible from public folder
+const STATIC_ASSET_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.ico', '.webp', '.pdf', '.mp4', '.webm', '.mp3', '.woff', '.woff2', '.ttf', '.otf']
+
 export default function middleware(req: NextRequest) {
   const url = req.nextUrl
   const hostname = req.headers.get('host') || ''
 
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
   const path = url.pathname
+
+  // Check if the request is for a static asset
+  const isStaticAsset = STATIC_ASSET_EXTENSIONS.some(ext => path.endsWith(ext)) || path.startsWith('/images/')
+
+  // If the request is for a static asset, don't rewrite it
+  if (isStaticAsset) {
+    return NextResponse.next()
+  }
 
   // Define our custom domains
   const currentHost = 

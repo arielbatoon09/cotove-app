@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
-    avatar: "/avatars/01.png",
+    avatar: "/avatars/logo-sample.jpg",
     shop: {
       name: "Yellow Clothing Storesssssssssssssssssssss",
       plan: "Free Plan"

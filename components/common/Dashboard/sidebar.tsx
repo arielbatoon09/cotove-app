@@ -1,72 +1,30 @@
 "use client"
 
-import { useMemo } from "react"
-import Link from "next/link"
-import { Command, Home, Settings, Sparkles, Store, Tablet } from "lucide-react"
+// Dependencies
+import Link from "next/link";
+import { Command } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
-import { Sidebar, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { DashboardNavigation } from "./navigation"
-import { UserProfile } from "./user-profile"
+// Utils
+import { cn } from "@/lib/utils";
+
+// Components
+import { Separator } from "@/components/ui/separator";
+import { Sidebar, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { DashboardNavigation } from "./navigation";
+import { UserProfile } from "./user-profile";
+
+// Data
+import { navigationItems } from "@/data/navigations";
 
 export function DashboardSidebar() {
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
 
-  const navigationItems = useMemo(
-    () => [
-      {
-        title: "Dashboard",
-        url: "/dashboard",
-        icon: Home,
-        isActive: true,
-      },
-      {
-        title: "Stores",
-        url: "/dashboard/stores",
-        icon: Store,
-        items: [
-          {
-            title: "All Stores",
-            url: "/dashboard/stores",
-          },
-          {
-            title: "Add New",
-            url: "/dashboard/stores/new",
-          },
-        ],
-      },
-      {
-        title: "Products",
-        url: "/dashboard/products",
-        icon: Tablet,
-        items: [
-          {
-            title: "All Products",
-            url: "/dashboard/products",
-          },
-          {
-            title: "Add New",
-            url: "/dashboard/products/new",
-            isActive: true,
-          },
-        ],
-      },
-      {
-        title: "Settings",
-        url: "/dashboard/settings",
-        icon: Settings,
-      },
-    ],
-    []
-  )
-
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
-    avatar: "/avatars/01.png",
+    avatar: "/avatars/logo-sample.jpg",
     shop: {
       name: "Modern Store",
       plan: "Pro Plan"
@@ -105,7 +63,7 @@ export function DashboardSidebar() {
           <Separator />
           {/* User Profile - more prominent on mobile */}
           <div className={cn(
-            "sm:hidden py-2",
+            "md:hidden py-2",
             isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
           )}>
             <UserProfile
