@@ -1,0 +1,97 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for Project Structure
+globs: **/*
+alwaysApply: false
+---
+
+# Project Structure & Code Organization
+
+## Package Manager
+- Use `npm` for all package installations and management
+
+## Instruction
+- Always check the folders and files if where to add a certain changes and ask for confirmation if wanted to proceed.
+
+## Naming Conventions
+- `kebab-case` - for all folders/files
+- `_kebab-case` - for feature and route domain's specific common modules.
+- `PascalCase` - for classes and types
+- `snake_case` - for database tables and columns
+- `camelCase` - for functions, zod schemas and etc.
+
+## Common Modules
+- `actions` - for server actions **(Only if necessary)**
+- `assets` - for assets
+- `components` - for components
+- `constants` - for constants
+- `contexts` - for react context api
+- `data` - for data access layer (e.g. `api`, `database`)
+- `hooks` - for custom hooks
+- `lib` - for 3rd party integrations libraries
+- `services` - for business logic and orchestration of data access layer **(Only if necessary)**
+- `stores` - for stores (e.g. `zustand`)
+- `types` - for types
+- `utils` - for utilities
+
+```
+/
+├── app/                         # App directory for all routes and layouts
+│   ├── (guest)/                 # Public marketing/landing pages
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── (main)/                  # Authenticated user dashboard
+│   │   ├── layout.tsx
+│   │   └── dashboard/
+│   │       └── page.tsx
+│   │
+│   ├── (admin)/                 # Admin-only pages
+│   │   ├── layout.tsx
+│   │   └── users/
+│   │       └── page.tsx
+│   │
+│   ├── (store)/                 # Multi-tenant store routes
+│   │   ├── layout.tsx
+│   │   └── [tenant]/            # Dynamic tenant storefront
+│   │       └── page.tsx
+│   │
+│   └── layout.tsx               # Root layout
+│
+├── assets/                      # Static assets (images, icons, fonts)
+│
+├── components/                  # Shared UI and functional components
+│   ├── ui/                      # ShadCN or atomic UI components
+│   ├── common/                  # Shared structural components (Navbar, Sidebar)
+│   ├── content/                 # Route-level or page-specific content components
+│   ├── blocks/                  # Store builder blocks (Hero, ProductGrid, etc.)
+│   └── forms/                   # Form-related components
+│       ├── container/           # Full form components (e.g., AuthForm, ProductForm)
+│       └── fields/              # Individual field components (e.g., TextInput, SelectField)
+│
+├── constants/                   # Global constants
+│
+├── contexts/                    # React context providers
+│
+├── data/                        # Data layer (API functions, static data, etc.)
+│
+├── hooks/                       # Custom React hooks
+│   ├── use-<hook>.ts
+│   └── query/
+│       ├── use-<hook>-query.ts
+│       └── use-<hook>-mutation.ts
+│
+├── lib/                         # Third-party libraries and integrations (Stripe, Validations, etc.)
+│
+├── services/                    # Business logic and service abstractions
+│
+├── stores/                      # Global state management (Zustand, etc.)
+│
+├── types/                       # TypeScript types and interfaces
+│
+└── utils/                       # Utility functions (formatDate, slugify, etc.)
+```
