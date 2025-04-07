@@ -15,6 +15,9 @@ export const config = {
   ],
 }
 
+// Protected routes that should only be accessible via their respective subdomains
+const PROTECTED_ROUTES = ['/admin', '/dashboard', '/store']
+
 export default function middleware(req: NextRequest) {
   const url = req.nextUrl
   const hostname = req.headers.get('host') || ''
@@ -34,6 +37,14 @@ export default function middleware(req: NextRequest) {
     hostname === 'www.localhost:3000' ||
     hostname === `www.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
 
+  // Check if the current path is a protected route
+  const isProtectedRoute = PROTECTED_ROUTES.some(route => path.startsWith(route))
+
+  // If on root domain and trying to access protected route, return 404
+  if (isRootDomain && isProtectedRoute) {
+    return new NextResponse(null, { status: 404 })
+  }
+
   // Handle root domain - serve the guest layout
   if (isRootDomain) {
     return NextResponse.rewrite(url)
@@ -41,23 +52,32 @@ export default function middleware(req: NextRequest) {
 
   // Rewrites for app subdomain
   if (currentHost === 'app') {
-    return NextResponse.rewrite(
-      new URL(`/dashboard${path}`, req.url)
-    )
+    const newUrl = new URL(`/dashboard${path}`, req.url)
+    // Add cache control headers for development
+    if (process.env.NODE_ENV === 'development') {
+      newUrl.searchParams.set('_t', Date.now().toString())
+    }
+    return NextResponse.rewrite(newUrl)
   }
 
   // Rewrites for admin subdomain
   if (currentHost === 'admin') {
-    return NextResponse.rewrite(
-      new URL(`/admin${path}`, req.url)
-    )
+    const newUrl = new URL(`/admin${path}`, req.url)
+    // Add cache control headers for development
+    if (process.env.NODE_ENV === 'development') {
+      newUrl.searchParams.set('_t', Date.now().toString())
+    }
+    return NextResponse.rewrite(newUrl)
   }
 
   // Handle store subdomains - only if not root domain and not other special subdomains
   if (currentHost && !['www', 'app', 'admin'].includes(currentHost) && !isRootDomain) {
-    return NextResponse.rewrite(
-      new URL(`/store/${currentHost}${path}`, req.url)
-    )
+    const newUrl = new URL(`/store/${currentHost}${path}`, req.url)
+    // Add cache control headers for development
+    if (process.env.NODE_ENV === 'development') {
+      newUrl.searchParams.set('_t', Date.now().toString())
+    }
+    return NextResponse.rewrite(newUrl)
   }
 
   // Default case: handle root domain

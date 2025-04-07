@@ -58,7 +58,7 @@ export function SignupForm() {
           Google
         </Button>
 
-        {/* Signup Link */}
+        {/* Login Link */}
         <p className="text-center text-sm text-muted-foreground">
           Already have an account? <Link href="/login" className="text-primary hover:underline">Login</Link>
         </p>
