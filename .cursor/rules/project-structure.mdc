@@ -20,7 +20,7 @@ alwaysApply: false
 ## Naming Conventions
 - `kebab-case` - for all folders/files
 - `_kebab-case` - for feature and route domain's specific common modules.
-- `PascalCase` - for classes and types
+- `PascalCase` - for classes, types, components function
 - `snake_case` - for database tables and columns
 - `camelCase` - for functions, zod schemas and etc.
 

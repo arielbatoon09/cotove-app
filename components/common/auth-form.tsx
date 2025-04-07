@@ -1,6 +1,6 @@
-import { SignupForm } from "../forms/container/SignupForm";
-import { LoginForm } from "../forms/container/LoginForm";
-import { ForgotPasswordForm } from "../forms/container/ForgotPasswordForm";
+import { SignupForm } from "../forms/container/signup-form";
+import { LoginForm } from "../forms/container/login-form";
+import { ForgotPasswordForm } from "../forms/container/forgot-password-form";
 
 export function AuthForm({ type }: { type: "login" | "signup" | "forgot-password" }) {
   return (

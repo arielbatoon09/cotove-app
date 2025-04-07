@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/common/AuthForm"
+import { AuthForm } from "@/components/common/auth-form"
 
 export default function ForgotPasswordPage() {
   return (
