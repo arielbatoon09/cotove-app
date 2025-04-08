@@ -92,29 +92,10 @@ export const navigationItems: NavigationItems = [
     ],
   },
 
-  // Team & Store
+  // Store
   {
-    label: "Team & Store",
+    label: "Store",
     items: [
-      {
-        title: "Team",
-        url: "/dashboard/team",
-        icon: Users2,
-        items: [
-          {
-            title: "Members",
-            url: "/dashboard/team",
-          },
-          {
-            title: "Invite",
-            url: "/dashboard/team/invite",
-          },
-          {
-            title: "Roles",
-            url: "/dashboard/team/roles",
-          },
-        ],
-      },
       {
         title: "Store",
         url: "/dashboard/store",
@@ -131,6 +112,25 @@ export const navigationItems: NavigationItems = [
           {
             title: "Marketing",
             url: "/dashboard/marketing",
+          },
+        ],
+      },
+      {
+        title: "Team",
+        url: "/dashboard/team",
+        icon: Users2,
+        items: [
+          {
+            title: "Members",
+            url: "/dashboard/team",
+          },
+          {
+            title: "Invite",
+            url: "/dashboard/team/invite",
+          },
+          {
+            title: "Roles",
+            url: "/dashboard/team/roles",
           },
         ],
       },
