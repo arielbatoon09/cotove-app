@@ -65,11 +65,10 @@ export function DashboardHeader({ user, className }: HeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 md:hidden"
+          className="md:hidden"
           onClick={toggleSidebar}
         >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle sidebar</span>
+          <Menu className="!h-6 !w-6" />
         </Button>
         {/* User profile - only shown on desktop */}
         {user && <UserProfile user={user} className="hidden md:block" />}

@@ -9,11 +9,12 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
+  Users2,
 } from "lucide-react"
 import { NavigationItems } from "@/types/navigations"
 
 export const navigationItems: NavigationItems = [
-  // Overview Group
+  // Overview
   {
     label: "Overview",
     items: [
@@ -23,12 +24,17 @@ export const navigationItems: NavigationItems = [
         icon: Home,
         isActive: true,
       },
+      {
+        title: "Overview",
+        url: "/dashboard/overview",
+        icon: BarChart3,
+      },
     ],
   },
 
-  // Main Operations
+  // Management
   {
-    label: "Main Operations",
+    label: "Management",
     items: [
       {
         title: "Products",
@@ -40,7 +46,7 @@ export const navigationItems: NavigationItems = [
             url: "/dashboard/products",
           },
           {
-            title: "Add New Product",
+            title: "Add New",
             url: "/dashboard/products/new",
           },
           {
@@ -86,10 +92,29 @@ export const navigationItems: NavigationItems = [
     ],
   },
 
-  // Store Management
+  // Team & Store
   {
-    label: "Store Management",
+    label: "Team & Store",
     items: [
+      {
+        title: "Team",
+        url: "/dashboard/team",
+        icon: Users2,
+        items: [
+          {
+            title: "Members",
+            url: "/dashboard/team",
+          },
+          {
+            title: "Invite",
+            url: "/dashboard/team/invite",
+          },
+          {
+            title: "Roles",
+            url: "/dashboard/team/roles",
+          },
+        ],
+      },
       {
         title: "Store",
         url: "/dashboard/store",
@@ -103,66 +128,18 @@ export const navigationItems: NavigationItems = [
             title: "Pages",
             url: "/dashboard/store/pages",
           },
-        ],
-      },
-      {
-        title: "Marketing",
-        url: "/dashboard/marketing",
-        icon: Megaphone,
-        items: [
           {
-            title: "Discounts",
-            url: "/dashboard/marketing/discounts",
-          },
-          {
-            title: "Promotions",
-            url: "/dashboard/marketing/promotions",
-          },
-        ],
-      },
-      {
-        title: "Content",
-        url: "/dashboard/content",
-        icon: FileText,
-        items: [
-          {
-            title: "Blog Posts",
-            url: "/dashboard/content/blog",
-          },
-          {
-            title: "Media",
-            url: "/dashboard/content/media",
+            title: "Marketing",
+            url: "/dashboard/marketing",
           },
         ],
       },
     ],
   },
 
-  // Insights & Analytics
+  // Settings & Support
   {
-    label: "Insights",
-    items: [
-      {
-        title: "Analytics",
-        url: "/dashboard/analytics",
-        icon: BarChart3,
-        items: [
-          {
-            title: "Overview",
-            url: "/dashboard/analytics",
-          },
-          {
-            title: "Reports",
-            url: "/dashboard/analytics/reports",
-          },
-        ],
-      },
-    ],
-  },
-
-  // Support & Settings
-  {
-    label: "Support & Settings",
+    label: "Settings & Support",
     items: [
       {
         title: "Settings",

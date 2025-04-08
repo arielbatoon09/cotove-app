@@ -31,7 +31,7 @@ export default function AppDashboard() {
             </p>
           </div>
 
-          <div className="mx-auto w-full max-w-5xl space-y-12 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-5xl space-y-12 px-4 md:px-6 lg:px-8">
             {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -51,7 +51,7 @@ export default function AppDashboard() {
             </div>
 
             {/* Tasks Grid */}
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               {tasks.map((task, index) => (
                 <div
                   key={task.id}
