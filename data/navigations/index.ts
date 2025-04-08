@@ -34,7 +34,7 @@ export const navigationItems: NavigationItems = [
 
   // Management
   {
-    label: "Management",
+    label: "Main Menu",
     items: [
       {
         title: "Products",
@@ -52,6 +52,10 @@ export const navigationItems: NavigationItems = [
           {
             title: "Categories",
             url: "/dashboard/products/categories",
+          },
+          {
+            title: "Promotional",
+            url: "/dashboard/products/promotional",
           },
         ],
       },
@@ -94,7 +98,7 @@ export const navigationItems: NavigationItems = [
 
   // Store
   {
-    label: "Store",
+    label: "Store Management",
     items: [
       {
         title: "Store",
@@ -102,16 +106,16 @@ export const navigationItems: NavigationItems = [
         icon: Store,
         items: [
           {
-            title: "Appearance",
-            url: "/dashboard/store/appearance",
-          },
-          {
             title: "Pages",
             url: "/dashboard/store/pages",
           },
           {
-            title: "Marketing",
-            url: "/dashboard/marketing",
+            title: "Global",
+            url: "/dashboard/store/pages",
+          },
+          {
+            title: "Appearance",
+            url: "/dashboard/store/appearance",
           },
         ],
       },
