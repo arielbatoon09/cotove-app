@@ -26,9 +26,6 @@ export async function fetcher<T>(url: string, options: FetchOptions = {}): Promi
 
   if (!response.ok) {
     const error = data as ApiResponse<ApiError>;
-    if (response.status !== 409) {
-      console.error("API Error:", error.data);
-    }
     throw error.data;
   }
 

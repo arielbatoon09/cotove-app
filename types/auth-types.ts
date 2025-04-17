@@ -1,7 +1,3 @@
-interface blank {
-  
-}
-
 export interface SignupSuccessData {
   message: string;
   user: {
@@ -24,4 +20,26 @@ export interface SignupFormType {
   email: string;
   password: string;
   agreeToTerms: boolean;
+}
+
+export interface LoginSuccessData {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    isActive: boolean;
+    lastLogin: string | null;
+    verifiedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  token: string;
+  timestamp: string;
+  path: string;
+}
+
+export interface LoginFormType {
+  email: string;
+  password: string;
 }
