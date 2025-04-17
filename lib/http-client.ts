@@ -6,6 +6,15 @@ import { useAuthStore } from "@/stores/auth-store";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// List of public routes that don't require authentication
+const PUBLIC_ROUTES = [
+  '/api/v1/auth/login',
+  '/api/v1/auth/signup',
+  '/api/v1/auth/refresh-token',
+  '/api/v1/auth/forgot-password',
+  '/api/v1/auth/reset-password',
+];
+
 class HttpClient {
   private instance: AxiosInstance;
   private refreshPromise: Promise<void> | null = null;
@@ -27,7 +36,16 @@ class HttpClient {
     );
   }
 
+  private isPublicRoute(url: string): boolean {
+    return PUBLIC_ROUTES.some(route => url.includes(route));
+  }
+
   private handleRequest = (config: InternalAxiosRequestConfig) => {
+    // Skip token handling for public routes
+    if (this.isPublicRoute(config.url || '')) {
+      return config;
+    }
+
     const authStore = useAuthStore.getState();
     const accessToken = authStore.user?.accessToken;
 
@@ -40,6 +58,11 @@ class HttpClient {
 
   private handleResponseError = async (error: any) => {
     const originalRequest = error.config;
+
+    // Skip token refresh for public routes
+    if (this.isPublicRoute(originalRequest.url || '')) {
+      throw error;
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
