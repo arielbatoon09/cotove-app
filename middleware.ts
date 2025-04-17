@@ -16,7 +16,7 @@ export const config = {
 }
 
 // Protected routes that should only be accessible via their respective subdomains
-const PROTECTED_ROUTES = ['/admin', '/dashboard', '/store']
+const PROTECTED_ROUTES = ['/admin', '/store']
 
 // Static asset file extensions that should be accessible from public folder
 const STATIC_ASSET_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.ico', '.webp', '.pdf', '.mp4', '.webm', '.mp3', '.woff', '.woff2', '.ttf', '.otf']
@@ -61,15 +61,15 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
-  // Rewrites for app subdomain
-  if (currentHost === 'app') {
-    const newUrl = new URL(`/dashboard${path}`, req.url)
-    // Add cache control headers for development
-    if (process.env.NODE_ENV === 'development') {
-      newUrl.searchParams.set('_t', Date.now().toString())
-    }
-    return NextResponse.rewrite(newUrl)
-  }
+  // // Rewrites for app subdomain
+  // if (currentHost === 'app') {
+  //   const newUrl = new URL(`/dashboard${path}`, req.url)
+  //   // Add cache control headers for development
+  //   if (process.env.NODE_ENV === 'development') {
+  //     newUrl.searchParams.set('_t', Date.now().toString())
+  //   }
+  //   return NextResponse.rewrite(newUrl)
+  // }
 
   // Rewrites for admin subdomain
   if (currentHost === 'admin') {
