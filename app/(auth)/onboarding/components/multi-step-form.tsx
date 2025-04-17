@@ -80,7 +80,7 @@ export function MultiStepForm({ onComplete }: MultiStepFormProps) {
 
   const stepTitles = [
     "Store Setup",
-    "Design Preferences",
+    "Store Pages",
     "Business Goals",
     "Fulfillment Options"
   ]
