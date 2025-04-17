@@ -19,6 +19,7 @@ export async function fetcher<T>(url: string, options: FetchOptions = {}): Promi
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers,
+    credentials: 'include',
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
