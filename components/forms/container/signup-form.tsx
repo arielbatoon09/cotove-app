@@ -4,41 +4,91 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { toast } from "sonner";
 
 // Components
-import { LoginFormType, SignupFormType, signupSchema } from "@/lib/validations/auth";
+import { SignupFormType, signupSchema } from "@/validations/auth";
 import { InputField, PasswordField, CheckboxField } from "../fields";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/ui/icons";
+import { Loader2 } from "lucide-react";
+
+// Services
+import { useSignup } from "@/services/auth/signup-service";
+import { SignupSuccessData } from "@/types/auth-types";
+import { ApiError } from "@/types";
 
 export function SignupForm() {
+  const [error, setError] = useState<string | null>(null);
+
   // Initialize Form
   const form = useForm<SignupFormType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
       agreeToTerms: false,
     },
   });
 
+  // Initialize Signup Service
+  const { signup, isMutating } = useSignup({ reset: form.reset });
+
   // Process Form Submission
   async function onSubmit(data: SignupFormType) {
-    console.log(data);
+    try {
+      const response = await signup(data);
+      
+      if (response.status === "success") {
+        const successData = response.data as SignupSuccessData;
+        setError(null);
+        toast.success(successData.message);
+      } else {
+        const errorData = response.data as unknown as ApiError;
+        setError(errorData.message);
+      }
+    } catch (error) {
+      console.log("Error", error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        const apiError = error as { message: string };
+        setError(apiError.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
+    }
   }
 
   // Render Form
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputField control={form.control} name="fullName" label="Full Name" type="text" placeholder="Enter your full name" />
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-4 text-sm text-red-600 bg-red-50 rounded-lg">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {/* Fields */}
+        <InputField control={form.control} name="name" label="Full Name" type="text" placeholder="Enter your full name" />
         <InputField control={form.control} name="email" label="Email" type="email" placeholder="Enter your email" />
         <PasswordField control={form.control} name="password" label="Password" placeholder="Enter your password" />
         <CheckboxField control={form.control} name="agreeToTerms" label="I agree to the terms and conditions" />
 
-        <Button type="submit" className="w-full">Create an account</Button>
+        {/* Submit Button */}
+        <Button type="submit" className="w-full" disabled={isMutating}>
+          {isMutating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating account...
+            </>
+          ) : (
+            "Create an account"
+          )}
+        </Button>
 
         {/* Divider */}
         <div className="relative">

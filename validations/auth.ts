@@ -11,7 +11,7 @@ export const loginSchema = z.object({
 })
 
 export const signupSchema = z.object({
-  fullName: z.string().min(1, {
+  name: z.string().min(1, {
     message: "Please enter your full name",
   }),
   email: z.string().email({
@@ -20,7 +20,9 @@ export const signupSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters long",
   }),
-  agreeToTerms: z.boolean().default(false).optional(),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms and conditions",
+  }),
 })
 
 export const forgotPasswordSchema = z.object({

@@ -6,9 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Components
-import { loginSchema } from "@/lib/validations/auth";
+import { loginSchema } from "@/validations/auth";
 import { InputField, PasswordField, CheckboxField } from "../fields";
-import { LoginFormType } from "@/lib/validations/auth";
+import { LoginFormType } from "@/validations/auth";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/ui/icons";
