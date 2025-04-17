@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // Components
 import { LoginFormType, loginSchema } from "@/validations/auth";
@@ -21,6 +22,7 @@ import { GoogleIcon } from "@/components/ui/icons";
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const { login, isLoading } = useAuthStore();
+  const router = useRouter();
 
   // Initialize Form
   const form = useForm<LoginFormType>({
@@ -38,6 +40,7 @@ export function LoginForm() {
       await login(data);
       form.reset();
       toast.success("Login successful");
+      router.push("/dashboard");
       setError(null);
     } catch (error) {
       if (error instanceof Error) {

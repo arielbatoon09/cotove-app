@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "authentication",
+      name: "cotove-app-auth",
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,

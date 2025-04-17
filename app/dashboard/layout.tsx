@@ -1,7 +1,16 @@
+"use client"
+
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardHeader, DashboardSidebar } from "@/components/common/Dashboard";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
