@@ -4,24 +4,23 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { toast } from "sonner";
+import { useState } from "react";
+
 // Components
-import { loginSchema } from "@/validations/auth";
+import { LoginFormType, loginSchema } from "@/validations/auth";
 import { InputField, PasswordField, CheckboxField } from "../fields";
-import { LoginFormType } from "@/validations/auth";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/ui/icons";
 import { Loader2 } from "lucide-react";
 
-// Services
-import { useLogin } from "@/services/auth/login-service";
-import { LoginSuccessData } from "@/types/auth-types";
-import { ApiError } from "@/types";
+// Store
+import { useAuthStore } from "@/stores/auth-store";
+import { GoogleIcon } from "@/components/ui/icons";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
+  const { login, isLoading } = useAuthStore();
 
   // Initialize Form
   const form = useForm<LoginFormType>({
@@ -33,32 +32,20 @@ export function LoginForm() {
     },
   });
 
-  // Initialize Login Service
-  const { login, isMutating } = useLogin({ reset: form.reset });
-
-  // Process Form Submission
+  // Handle Form Submission
   async function onSubmit(data: LoginFormType) {
     try {
-      const response = await login(data);
-      
-      if (response.status === "success") {
-        const successData = response.data as LoginSuccessData;
-        toast.success(successData.message);
-      } else {
-        const errorData = response.data as unknown as ApiError;
-        setError(errorData.message);
-      }
+      await login(data);
+      form.reset();
+      toast.success("Login successful");
+      setError(null);
     } catch (error) {
-      if (error && typeof error === 'object' && 'message' in error) {
-        const apiError = error as { message: string };
-        setError(apiError.message);
-      } else {
-        setError("An unexpected error occurred");
+      if (error instanceof Error) {
+        setError(error.message);
       }
     }
   }
 
-  // Render Form
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -72,20 +59,23 @@ export function LoginForm() {
         {/* Fields */}
         <InputField control={form.control} name="email" label="Email" type="email" placeholder="Enter your email" />
         <PasswordField control={form.control} name="password" label="Password" placeholder="Enter your password" />
+
         <div className="flex items-center justify-between">
           <CheckboxField control={form.control} name="rememberMe" label="Remember me" />
-          <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
             Forgot password?
           </Link>
         </div>
-        <Button type="submit" className="w-full" disabled={isMutating}>
-          {isMutating ? (
+
+        {/* Submit Button */}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Logging in...
+              Signing in...
             </>
           ) : (
-            "Login"
+            "Sign in"
           )}
         </Button>
 

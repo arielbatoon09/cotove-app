@@ -1,15 +1,18 @@
 export interface ApiError {
-  code: string;
-  message: string;
-  details: string;
-  timestamp: string;
-  path: string;
+  status: "error";
+  statusCode: number;
+  data: {
+    code: string;
+    message: string;
+    details: string;
+    timestamp: string;
+    path: string;
+  };
+  requestId: string;
+  documentation_url: string;
 }
 
 export interface ApiResponse<T> {
   status: "success" | "error";
-  statusCode: number;
   data: T;
-  requestId: string;
-  documentation_url: string;
 }

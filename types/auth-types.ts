@@ -1,15 +1,8 @@
+import { User } from "@/types/user-types";
+
 export interface SignupSuccessData {
   message: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    isActive: boolean;
-    lastLogin: string | null;
-    verifiedAt: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: User;
   verificationUrl: string;
   timestamp: string;
   path: string;
@@ -23,23 +16,25 @@ export interface SignupFormType {
 }
 
 export interface LoginSuccessData {
-  message: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    isActive: boolean;
-    lastLogin: string | null;
-    verifiedAt: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
-  token: string;
-  timestamp: string;
-  path: string;
+  id: string;
+  email: string;
+  name: string;
+  isActive: boolean;
+  lastLogin: string | null;
+  verifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LoginFormType {
   email: string;
   password: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (data: LoginFormType) => Promise<void>;
+  logout: () => void;
 }

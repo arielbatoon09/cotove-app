@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import useSWR, { SWRConfiguration } from "swr";
 import useSWRMutation, { SWRMutationConfiguration } from "swr/mutation";
 import { fetcher } from "./fetcher";
@@ -13,118 +12,63 @@ interface RequestOptions extends RequestInit {
 class HttpClient {
   private baseUrl: string;
 
-  constructor(baseUrl?: string) {
-    const url = baseUrl || API_BASE_URL;
-    if (!url) {
-      throw new Error("API_BASE_URL is not defined");
-    }
-    this.baseUrl = url;
+  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
+    this.baseUrl = baseUrl;
   }
 
-  private async handleResponse<T>(response: Response): Promise<T> {
+  private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
+    const data = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Something went wrong");
+      const error = data as ApiError;
+      throw new Error(error.data.message || "Something went wrong");
     }
 
-    return response.json();
+    return data as ApiResponse<T>;
   }
 
   private getHeaders(): HeadersInit {
     return {
       "Content-Type": "application/json",
-      // Add any common headers here (e.g., auth tokens)
     };
   }
 
-  async get<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        method: "GET",
-        headers: {
-          ...this.getHeaders(),
-          ...options.headers,
-        },
-      });
+  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "GET",
+      headers: this.getHeaders(),
+    });
 
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-      throw error;
-    }
+    return this.handleResponse<T>(response);
   }
 
-  async post<T>(endpoint: string, data: any, options: RequestOptions = {}): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        method: "POST",
-        headers: {
-          ...this.getHeaders(),
-          ...options.headers,
-        },
-        body: JSON.stringify(data),
-      });
+  async post<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "POST",
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
 
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error("An unexpected error occurred");
-      }
-      throw error;
-    }
+    return this.handleResponse<T>(response);
   }
 
-  async put<T>(endpoint: string, data: any, options: RequestOptions = {}): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        method: "PUT",
-        headers: {
-          ...this.getHeaders(),
-          ...options.headers,
-        },
-        body: JSON.stringify(data),
-      });
+  async put<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "PUT",
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
 
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-      throw error;
-    }
+    return this.handleResponse<T>(response);
   }
 
-  async delete<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        method: "DELETE",
-        headers: {
-          ...this.getHeaders(),
-          ...options.headers,
-        },
-      });
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "DELETE",
+      headers: this.getHeaders(),
+    });
 
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-      throw error;
-    }
+    return this.handleResponse<T>(response);
   }
 }
 
