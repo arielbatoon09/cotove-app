@@ -37,6 +37,7 @@ class HttpClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "GET",
       headers: this.getHeaders(),
+      credentials: "include",
     });
 
     return this.handleResponse<T>(response);
@@ -47,6 +48,7 @@ class HttpClient {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify(data),
+      credentials: "include",
     });
 
     return this.handleResponse<T>(response);
@@ -57,6 +59,7 @@ class HttpClient {
       method: "PUT",
       headers: this.getHeaders(),
       body: JSON.stringify(data),
+      credentials: "include",
     });
 
     return this.handleResponse<T>(response);
@@ -66,6 +69,7 @@ class HttpClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "DELETE",
       headers: this.getHeaders(),
+      credentials: "include",
     });
 
     return this.handleResponse<T>(response);
