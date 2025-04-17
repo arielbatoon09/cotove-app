@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isLoading) {
       // Protected routes
-      if (isAuthenticated && pathname.startsWith("/login")) {
+      if (isAuthenticated && pathname.startsWith("/login") || pathname.startsWith("/signup")) {
         router.push("/dashboard");
       }
       // Auth routes
