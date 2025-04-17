@@ -3,8 +3,16 @@ export interface User {
   email: string;
   name: string;
   isActive: boolean;
-  lastLogin: string | null;
-  verifiedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
+  expiresAt?: number;
+  details?: {
+    id: string;
+    email: string;
+    name: string;
+    isActive: boolean;
+  };
+  timestamp?: string;
+  path?: string;
 }

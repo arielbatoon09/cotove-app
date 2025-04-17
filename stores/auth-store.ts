@@ -8,12 +8,31 @@ import { mutate } from "swr";
 import { AuthState } from "@/types/auth-types";
 import { User } from "@/types/user-types";
 
-export const useAuthStore = create<AuthState>()(
+interface AuthStoreState extends AuthState {
+  checkTokenExpiration: () => void;
+}
+
+export const useAuthStore = create<AuthStoreState>()(
   persist(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
+
+      // Check token expiration
+      checkTokenExpiration: () => {
+        const state = get();
+        if (state.user?.expiresAt) {
+          const now = Math.floor(Date.now() / 1000);
+          if (now >= state.user.expiresAt) {
+            set({
+              user: null,
+              isAuthenticated: false,
+            });
+            mutate(() => true, undefined, { revalidate: true });
+          }
+        }
+      },
 
       // Login Handler
       login: async (data: LoginFormType) => {
