@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/auth-store";
 
 interface UserProfileProps {
   user: {
@@ -33,6 +34,7 @@ export function UserProfile({
   toggleSidebar = false
 }: UserProfileProps) {
   const { toggleSidebar: toggleSidebarFn } = useSidebar()
+  const { logout } = useAuthStore();
 
   // Handle avatar click to toggle sidebar in mobile view if toggleSidebar is true
   const handleAvatarClick = (e: React.MouseEvent) => {
@@ -140,7 +142,9 @@ export function UserProfile({
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => {
+                logout();
+              }}>
                 <LogOut className="mr-2 h-4 w-4 flex-shrink-0" />
                 <span className="truncate">Log out</span>
               </DropdownMenuItem>
