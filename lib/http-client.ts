@@ -1,78 +1,120 @@
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import useSWR, { SWRConfiguration } from "swr";
 import useSWRMutation, { SWRMutationConfiguration } from "swr/mutation";
-import { fetcher } from "./fetcher";
-import { ApiError, ApiResponse } from "@/types";
+import { ApiResponse } from "@/types";
+import { useAuthStore } from "@/stores/auth-store";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface RequestOptions extends RequestInit {
-  headers?: HeadersInit;
-}
-
 class HttpClient {
-  private baseUrl: string;
+  private instance: AxiosInstance;
+  private refreshPromise: Promise<void> | null = null;
+  private requestQueue: (() => void)[] = [];
 
-  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
-    this.baseUrl = baseUrl;
+  constructor() {
+    this.instance = axios.create({
+      baseURL: API_BASE_URL,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    this.instance.interceptors.request.use(this.handleRequest);
+    this.instance.interceptors.response.use(
+      (response) => response,
+      this.handleResponseError
+    );
   }
 
-  private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
-    const data = await response.json();
+  private handleRequest = (config: InternalAxiosRequestConfig) => {
+    const authStore = useAuthStore.getState();
+    const accessToken = authStore.user?.accessToken;
 
-    if (!response.ok) {
-      const error = data as ApiError;
-      throw new Error(error.data.message || "Something went wrong");
+    if (accessToken) {
+      config.headers.set('Authorization', `Bearer ${accessToken}`);
     }
 
-    return data as ApiResponse<T>;
+    return config;
+  };
+
+  private handleResponseError = async (error: any) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        await this.handleTokenRefresh();
+        return this.instance(originalRequest);
+      } catch (refreshError) {
+        useAuthStore.getState().logout();
+        throw refreshError;
+      }
+    }
+
+    throw error;
+  };
+
+  private async handleTokenRefresh() {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const authStore = useAuthStore.getState();
+        const refreshToken = authStore.user?.refreshToken;
+
+        if (!refreshToken) {
+          throw new Error("No refresh token available");
+        }
+
+        const response = await this.instance.post<ApiResponse<{
+          accessToken: string;
+          refreshToken: string;
+          expiresIn: number;
+          expiresAt: number;
+        }>>("/api/v1/auth/refresh", { refreshToken });
+
+        if (response.data.status === "success") {
+          authStore.updateTokens(response.data.data);
+        }
+      } finally {
+        this.refreshPromise = null;
+        this.processQueue();
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
-  private getHeaders(): HeadersInit {
-    return {
-      "Content-Type": "application/json",
-    };
+  private processQueue() {
+    while (this.requestQueue.length > 0) {
+      const request = this.requestQueue.shift();
+      if (request) request();
+    }
   }
 
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "GET",
-      headers: this.getHeaders(),
-      credentials: "include",
-    });
-
-    return this.handleResponse<T>(response);
+  // HTTP Methods
+  async get<T>(url: string, config?: InternalAxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.instance.get<ApiResponse<T>>(url, config);
+    return response.data;
   }
 
-  async post<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "POST",
-      headers: this.getHeaders(),
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
-
-    return this.handleResponse<T>(response);
+  async post<T>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.instance.post<ApiResponse<T>>(url, data, config);
+    return response.data;
   }
 
-  async put<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "PUT",
-      headers: this.getHeaders(),
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
-
-    return this.handleResponse<T>(response);
+  async put<T>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.instance.put<ApiResponse<T>>(url, data, config);
+    return response.data;
   }
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "DELETE",
-      headers: this.getHeaders(),
-      credentials: "include",
-    });
-
-    return this.handleResponse<T>(response);
+  async delete<T>(url: string, config?: InternalAxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.instance.delete<ApiResponse<T>>(url, config);
+    return response.data;
   }
 }
 
@@ -86,50 +128,41 @@ export const defaultSWRConfig: SWRConfiguration = {
   dedupingInterval: 2000,
 };
 
-// Create a reusable SWR hook for GET requests
+// SWR Hooks
 export function useGet<T>(url: string, config?: SWRConfiguration) {
   const fullConfig = { ...defaultSWRConfig, ...config };
-  return useSWR<ApiResponse<T>>(url, fetcher, fullConfig);
+  return useSWR<ApiResponse<T>>(url, (url) => httpClient.get(url), fullConfig);
 }
 
-// Create a reusable SWR mutation hook for POST requests
 export function useMutation<T, V = any>(
   url: string,
   config?: Partial<SWRMutationConfiguration<ApiResponse<T>, Error, string, V>>
 ) {
   return useSWRMutation<ApiResponse<T>, Error, string, V>(
     url,
-    async (url: string, { arg }: { arg: V }) => {
-      return fetcher(url, { method: "POST", body: arg });
-    },
+    async (url, { arg }) => httpClient.post(url, arg),
     { revalidate: false, ...config }
   );
 }
 
-// Create a reusable SWR mutation hook for PUT requests
 export function usePut<T, V = any>(
   url: string,
   config?: Partial<SWRMutationConfiguration<ApiResponse<T>, Error, string, V>>
 ) {
   return useSWRMutation<ApiResponse<T>, Error, string, V>(
     url,
-    async (url: string, { arg }: { arg: V }) => {
-      return fetcher(url, { method: "PUT", body: arg });
-    },
+    async (url, { arg }) => httpClient.put(url, arg),
     { revalidate: false, ...config }
   );
 }
 
-// Create a reusable SWR mutation hook for DELETE requests
 export function useDelete<T>(
   url: string,
   config?: Partial<SWRMutationConfiguration<ApiResponse<T>, Error, string, never>>
 ) {
   return useSWRMutation<ApiResponse<T>, Error, string, never>(
     url,
-    async (url: string) => {
-      return fetcher(url, { method: "DELETE" });
-    },
+    async (url) => httpClient.delete(url),
     { revalidate: false, ...config }
   );
 } 

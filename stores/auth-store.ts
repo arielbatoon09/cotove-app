@@ -10,6 +10,7 @@ import { User } from "@/types/user-types";
 
 interface AuthStoreState extends AuthState {
   checkTokenExpiration: () => void;
+  updateTokens: (tokens: { accessToken: string; refreshToken: string; expiresIn: number; expiresAt: number }) => void;
 }
 
 export const useAuthStore = create<AuthStoreState>()(
@@ -32,6 +33,13 @@ export const useAuthStore = create<AuthStoreState>()(
             mutate(() => true, undefined, { revalidate: true });
           }
         }
+      },
+
+      // Update tokens
+      updateTokens: (tokens) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, ...tokens } : null,
+        }));
       },
 
       // Login Handler
