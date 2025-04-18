@@ -7,8 +7,10 @@ import {
   ShoppingCart, 
   Info, 
   Contact2, 
-  FileText 
+  FileText,
+  HelpCircle
 } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface DesignPreferencesFormProps {
   formData: any
@@ -20,6 +22,7 @@ const templates = [
     id: "homepage",
     label: "Homepage",
     description: "Your store's main landing page",
+    details: "Showcase your products and brand story",
     icon: LayoutGrid,
     required: true
   },
@@ -27,6 +30,7 @@ const templates = [
     id: "shop",
     label: "Shop Page",
     description: "Product listing and filtering",
+    details: "Display your products in a grid or list view",
     icon: ShoppingCart,
     required: true
   },
@@ -34,6 +38,7 @@ const templates = [
     id: "cart",
     label: "Shopping Cart",
     description: "Cart and checkout process",
+    details: "Secure and streamlined checkout experience",
     icon: ShoppingCart,
     required: true
   },
@@ -41,6 +46,7 @@ const templates = [
     id: "about",
     label: "About Us",
     description: "Share your brand story",
+    details: "Build trust with your customers",
     icon: Info,
     required: false
   },
@@ -48,6 +54,7 @@ const templates = [
     id: "contact",
     label: "Contact",
     description: "Customer support and inquiries",
+    details: "Help customers reach you easily",
     icon: Contact2,
     required: false
   },
@@ -55,6 +62,7 @@ const templates = [
     id: "blog",
     label: "Blog",
     description: "Share updates and articles",
+    details: "Engage customers with content marketing",
     icon: FileText,
     required: false
   }
@@ -82,9 +90,24 @@ export function DesignPreferencesForm({ formData, setFormData }: DesignPreferenc
 
   return (
     <div className="space-y-6">
-      <p className="text-muted-foreground">
-        Required templates are pre-selected. Choose additional pages you'd like to include.
-      </p>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label>Store Pages</Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Choose which pages you want in your store</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Required pages are pre-selected. Select additional pages to enhance your store.
+        </p>
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         {templates.map((template) => {
@@ -108,7 +131,7 @@ export function DesignPreferencesForm({ formData, setFormData }: DesignPreferenc
               )}>
                 <Icon className="h-5 w-5" />
               </div>
-              <div>
+              <div className="space-y-1">
                 <div className="flex items-center space-x-2">
                   <h3 className="font-medium">{template.label}</h3>
                   {template.required && (
@@ -117,6 +140,9 @@ export function DesignPreferencesForm({ formData, setFormData }: DesignPreferenc
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {template.description}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {template.details}
                 </p>
               </div>
             </div>

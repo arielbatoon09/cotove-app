@@ -1,6 +1,7 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { 
   Rocket, 
@@ -9,45 +10,53 @@ import {
   DollarSign, 
   Megaphone, 
   Heart,
-  Sparkles
+  Sparkles,
+  HelpCircle
 } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const businessGoals = [
   {
     id: "launch",
     label: "Launch a new product line",
     icon: Rocket,
-    description: "Get your products to market"
+    description: "Get your products to market",
+    details: "Perfect for new businesses or expanding product offerings"
   },
   {
     id: "audience",
     label: "Grow my audience",
     icon: Users,
-    description: "Expand your customer base"
+    description: "Expand your customer base",
+    details: "Reach more potential customers and build loyalty"
   },
   {
     id: "scale",
     label: "Scale operations",
     icon: TrendingUp,
-    description: "Streamline and grow your business"
+    description: "Streamline and grow your business",
+    details: "Optimize processes and increase efficiency"
   },
   {
     id: "sales",
     label: "Increase sales",
     icon: DollarSign,
-    description: "Boost your revenue"
+    description: "Boost your revenue",
+    details: "Implement strategies to drive more sales"
   },
   {
     id: "brand",
     label: "Build brand awareness",
     icon: Megaphone,
-    description: "Make your brand stand out"
+    description: "Make your brand stand out",
+    details: "Create a strong brand identity and recognition"
   },
   {
     id: "experience",
     label: "Improve customer experience",
     icon: Heart,
-    description: "Enhance customer satisfaction"
+    description: "Enhance customer satisfaction",
+    details: "Create memorable shopping experiences"
   }
 ]
 
@@ -77,10 +86,25 @@ export function BusinessGoalsForm({ formData, setFormData }: BusinessGoalsFormPr
   }
 
   return (
-    <div className="space-y-8">
-      <p className="text-sm text-muted-foreground">
-        Choose all that apply to your business goals
-      </p>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label>Business Goals</Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Select the goals that align with your business objectives</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Choose all that apply to help us customize your store experience
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {businessGoals.map((goal) => {
@@ -102,12 +126,15 @@ export function BusinessGoalsForm({ formData, setFormData }: BusinessGoalsFormPr
                   "p-2 rounded-lg",
                   isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
                 )}>
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-medium">{goal.label}</h3>
                   <p className="text-sm text-muted-foreground">
                     {goal.description}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {goal.details}
                   </p>
                 </div>
               </div>
@@ -129,12 +156,15 @@ export function BusinessGoalsForm({ formData, setFormData }: BusinessGoalsFormPr
             "p-2 rounded-lg",
             formData.needAIAssistance ? "bg-primary text-primary-foreground" : "bg-muted"
           )}>
-            <Sparkles className="h-6 w-6" />
+            <Sparkles className="h-5 w-5" />
           </div>
           <div className="space-y-1">
             <h3 className="font-medium">AI-Powered Assistance</h3>
             <p className="text-sm text-muted-foreground">
               Let AI help you create product descriptions and visuals
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Save time with AI-generated content and optimization suggestions
             </p>
           </div>
         </div>
