@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 // Store
 import { useAuthStore } from "@/stores/auth-store";
 import { GoogleIcon } from "@/components/ui/icons";
+import { handleApiError } from "@/utils/error-handler";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -43,9 +44,7 @@ export function LoginForm() {
       router.push("/dashboard");
       setError(null);
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      setError(handleApiError(error));
     }
   }
 

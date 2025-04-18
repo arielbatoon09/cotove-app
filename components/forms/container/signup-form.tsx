@@ -15,13 +15,19 @@ import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/ui/icons";
 import { Loader2 } from "lucide-react";
 
-// Services
-import { useSignup } from "@/services/auth/signup-service";
+// Types
 import { SignupSuccessData } from "@/types/auth-types";
 import { ApiError } from "@/types";
 
+// Store
+import { useAuthStore } from "@/stores/auth-store";
+
+// Utils
+import { handleApiError } from "@/utils/error-handler";
+
 export function SignupForm() {
   const [error, setError] = useState<string | null>(null);
+  const { signup, isLoading, setNotifyEmailVerification } = useAuthStore();
 
   // Initialize Form
   const form = useForm<SignupFormType>({
@@ -34,9 +40,6 @@ export function SignupForm() {
     },
   });
 
-  // Initialize Signup Service
-  const { signup, isMutating } = useSignup({ reset: form.reset });
-
   // Process Form Submission
   async function onSubmit(data: SignupFormType) {
     try {
@@ -46,18 +49,14 @@ export function SignupForm() {
         const successData = response.data as SignupSuccessData;
         setError(null);
         toast.success(successData.message);
+        setNotifyEmailVerification(true);
+        form.reset();
       } else {
         const errorData = response.data as unknown as ApiError;
-        setError(errorData.message);
+        setError(errorData.data.message);
       }
     } catch (error) {
-      console.log("Error", error);
-      if (error && typeof error === 'object' && 'message' in error) {
-        const apiError = error as { message: string };
-        setError(apiError.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(handleApiError(error));
     }
   }
 
@@ -79,8 +78,8 @@ export function SignupForm() {
         <CheckboxField control={form.control} name="agreeToTerms" label="I agree to the terms and conditions" />
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={isMutating}>
-          {isMutating ? (
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating account...

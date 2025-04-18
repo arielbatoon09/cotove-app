@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { LoginFormType } from "@/validations/auth";
+import { LoginFormType, SignupFormType } from "@/validations/auth";
 import { ApiResponse } from "@/types";
 import { httpClient } from "@/lib/http-client";
-import { LoginSuccessData } from "@/types/auth-types";
+import { LoginSuccessData, SignupSuccessData } from "@/types/auth-types";
 import { mutate } from "swr";
 import { AuthState } from "@/types/auth-types";
 import { User } from "@/types/user-types";
@@ -13,6 +13,9 @@ interface AuthStoreState extends AuthState {
   updateTokens: (tokens: { accessToken: string; refreshToken: string; expiresIn: number; expiresAt: number }) => void;
   setUser: (user: User | null) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
+  isNotifyEmailVerification: boolean;
+  setNotifyEmailVerification: (value: boolean) => void;
+  signup: (data: SignupFormType) => Promise<ApiResponse<SignupSuccessData>>;
 }
 
 export const useAuthStore = create<AuthStoreState>()(
@@ -23,6 +26,25 @@ export const useAuthStore = create<AuthStoreState>()(
       isLoading: false,
       accessToken: null,
       refreshToken: null,
+      isNotifyEmailVerification: false,
+
+      // Set email verification notification
+      setNotifyEmailVerification: (value: boolean) => {
+        set({ isNotifyEmailVerification: value });
+      },
+
+      // Signup Handler
+      signup: async (data: SignupFormType) => {
+        try {
+          set({ isLoading: true });
+          const response = await httpClient.post<SignupSuccessData>("/api/v1/auth/signup", data);
+          set({ isLoading: false });
+          return response;
+        } catch (error) {
+          set({ isLoading: false });
+          throw error;
+        }
+      },
 
       // Check token expiration
       checkTokenExpiration: () => {
@@ -114,8 +136,6 @@ export const useAuthStore = create<AuthStoreState>()(
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
       }),
     }
   )
