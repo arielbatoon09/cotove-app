@@ -11,6 +11,8 @@ import { User } from "@/types/user-types";
 interface AuthStoreState extends AuthState {
   checkTokenExpiration: () => void;
   updateTokens: (tokens: { accessToken: string; refreshToken: string; expiresIn: number; expiresAt: number }) => void;
+  setUser: (user: User | null) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
 }
 
 export const useAuthStore = create<AuthStoreState>()(
@@ -19,6 +21,8 @@ export const useAuthStore = create<AuthStoreState>()(
       user: null,
       isAuthenticated: false,
       isLoading: false,
+      accessToken: null,
+      refreshToken: null,
 
       // Check token expiration
       checkTokenExpiration: () => {
@@ -67,13 +71,42 @@ export const useAuthStore = create<AuthStoreState>()(
       },
 
       // Logout Handler
-      logout: () => {
-        set({
-          user: null,
-          isAuthenticated: false,
-        });
-        // Reset SWR cache on logout
-        mutate(() => true, undefined, { revalidate: true });
+      logout: async () => {
+        try {
+          const { user } = get();
+          if (!user?.refreshToken) {
+            throw new Error("No refresh token provided for logout");
+          }
+
+          await httpClient.post('/api/v1/auth/logout', {
+            refreshToken: user.refreshToken,
+          });
+
+          // Reset SWR cache and form state
+          await mutate(() => true, undefined, { revalidate: true });
+          
+          // Clear auth state
+          set({
+            user: null,
+            isAuthenticated: false,
+          });
+        } catch (error) {
+          console.error('Logout error:', error);
+          throw error;
+        }
+      },
+
+      // Set User
+      setUser: (user: User | null) => {
+        set({ user });
+      },
+
+      // Set Tokens
+      setTokens: (accessToken: string, refreshToken: string) => {
+        set((state) => ({
+          accessToken,
+          refreshToken,
+        }));
       },
     }),
     {
@@ -81,6 +114,8 @@ export const useAuthStore = create<AuthStoreState>()(
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
       }),
     }
   )

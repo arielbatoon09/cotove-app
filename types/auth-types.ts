@@ -35,6 +35,8 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  accessToken: string | null;
+  refreshToken: string | null;
   login: (data: LoginFormType) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }

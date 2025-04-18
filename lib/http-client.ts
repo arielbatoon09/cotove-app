@@ -11,7 +11,6 @@ const PUBLIC_ROUTES = [
   '/api/v1/auth/login',
   '/api/v1/auth/signup',
   '/api/v1/auth/refresh-token',
-  '/api/v1/auth/forgot-password',
   '/api/v1/auth/reset-password',
 ];
 
@@ -98,7 +97,7 @@ class HttpClient {
           refreshToken: string;
           expiresIn: number;
           expiresAt: number;
-        }>>("/api/v1/auth/refresh", { refreshToken });
+        }>>("/api/v1/auth/refresh-token", { refreshToken });
 
         if (response.data.status === "success") {
           authStore.updateTokens(response.data.data);
