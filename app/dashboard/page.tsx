@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { onboardingTasks } from "@/data/onboarding"
 import { OnboardingTask } from "@/types/onboarding"
 import { Button } from "@/components/ui/button"
-import { OnboardingModal } from "./components/onboarding-modal"
+import { OnboardingModal } from "@/components/common/Onboarding/onboarding-modal"
 import { Card } from "@/components/ui/card"
 
 export default function DashboardPage() {

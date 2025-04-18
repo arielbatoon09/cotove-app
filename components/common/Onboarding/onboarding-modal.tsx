@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { MultiStepForm } from "@/app/(auth)/onboarding/components/multi-step-form"
+import { MultiStepForm } from "@/components/common/Onboarding/multi-steo-form";
 
 interface OnboardingModalProps {
   open: boolean
