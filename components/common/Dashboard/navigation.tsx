@@ -2,8 +2,9 @@
 
 // Dependencies
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronRight } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 // Utils
 import { cn } from "@/lib/utils"
@@ -21,10 +22,35 @@ interface DashboardNavigationProps {
 
 export function DashboardNavigation({ items }: DashboardNavigationProps) {
   const [openIndex, setOpenIndex] = useState<string | null>(null);
+  const pathname = usePathname();
 
-  const handleToggle = (groupIndex: number, itemIndex: number) => {
-    const newIndex = `${groupIndex}-${itemIndex}`;
-    setOpenIndex(openIndex === newIndex ? null : newIndex);
+  // Initialize open state when active path changes
+  useEffect(() => {
+    items.forEach((group, groupIndex) => {
+      group.items.forEach((item, itemIndex) => {
+        if (item.items?.length && isSubItemActive(item)) {
+          setOpenIndex(`${groupIndex}-${itemIndex}`);
+        }
+      });
+    });
+  }, []);
+
+  const handleToggle = (groupIndex: number, itemIndex: number, hasSubItems: boolean) => {
+    if (!hasSubItems) {
+      setOpenIndex(null);
+      return;
+    }
+    
+    const index = `${groupIndex}-${itemIndex}`;
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  const isSubItemActive = (item: any) => {
+    return item.items?.some((subItem: any) => subItem.url === pathname);
+  };
+
+  const isItemActive = (item: any) => {
+    return item.url === pathname || isSubItemActive(item);
   };
 
   return (
@@ -45,7 +71,7 @@ export function DashboardNavigation({ items }: DashboardNavigationProps) {
                   key={item.title}
                   asChild
                   open={openIndex === `${groupIndex}-${itemIndex}`}
-                  onOpenChange={() => handleToggle(groupIndex, itemIndex)}
+                  onOpenChange={() => handleToggle(groupIndex, itemIndex, !!item.items?.length)}
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
@@ -53,20 +79,23 @@ export function DashboardNavigation({ items }: DashboardNavigationProps) {
                         asChild={!item.items?.length}
                         tooltip={item.title}
                         className={cn(
-                          item.isActive && "bg-sidebar-accent text-sidebar-accent-foreground cursor-pointer"
+                          !item.items?.length && isItemActive(item) && "bg-sidebar-accent text-sidebar-accent-foreground cursor-pointer"
                         )}
                       >
                         {item.items?.length ? (
                           <div className="flex items-center gap-2 w-full cursor-pointer">
                             <item.icon className={cn(
-                              item.isActive ? "text-primary w-5 h-5" : "text-foreground/70 w-5 h-5"
+                              "w-5 h-5",
+                              isItemActive(item) ? "text-primary" : "text-foreground/70"
                             )} />
-                            <span>{item.title}</span>
+                            <span className={cn(
+                              isItemActive(item) ? "text-primary" : ""
+                            )}>{item.title}</span>
                           </div>
                         ) : (
                           <Link href={item.url} className="flex items-center gap-2">
                             <item.icon className={cn(
-                              item.isActive ? "text-primary w-5 h-5" : "text-foreground/70 w-5 h-5"
+                              isItemActive(item) ? "text-primary w-5 h-5" : "text-foreground/70 w-5 h-5"
                             )} />
                             <span>{item.title}</span>
                           </Link>
@@ -88,13 +117,11 @@ export function DashboardNavigation({ items }: DashboardNavigationProps) {
                                 <SidebarMenuSubButton
                                   asChild
                                   className={cn(
-                                    subItem.isActive && "bg-sidebar-accent/50 font-medium text-sidebar-accent-foreground"
+                                    subItem.url === pathname && "bg-sidebar-accent text-sidebar-accent-foreground cursor-pointer"
                                   )}
                                 >
                                   <Link href={subItem.url}>
-                                    <span className={cn(
-                                      subItem.isActive && "text-primary"
-                                    )}>{subItem.title}</span>
+                                    <span>{subItem.title}</span>
                                   </Link>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
